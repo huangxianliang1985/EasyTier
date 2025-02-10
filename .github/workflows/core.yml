@@ -1,10 +1,12 @@
 name: EasyTier Core
 
 on:
-  push:
-    branches: ["develop", "main", "releases/**"]
-  pull_request:
-    branches: ["develop", "main"]
+  workflow_dispatch:
+    inputs:
+      build_ref:
+        description: 'Git reference to build (branch or tag). Leave empty to use the default branch.'
+        required: false
+        default: ''
 
 env:
   CARGO_TERM_COLOR: always
