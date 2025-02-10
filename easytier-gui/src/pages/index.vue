@@ -249,6 +249,7 @@ onBeforeMount(async () => {
 })
 
 onMounted(async () => {
+  console.error("easytier init vpn service start")
   if (type() === 'android') {
     try {
       await initMobileVpnService()
