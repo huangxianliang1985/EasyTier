@@ -15,7 +15,7 @@ export const useNetworkStore = defineStore('networkStore', {
       networkInfos: {} as Record<string, NetworkTypes.NetworkInstanceRunningInfo>,
 
       autoStartInstIds: [] as string[],
-      networkInstanceIds: [] as string[],
+      
     }
   },
 
@@ -108,12 +108,12 @@ export const useNetworkStore = defineStore('networkStore', {
     loadAutoStartInstIdsFromLocalStorage() {
       try {
         this.autoStartInstIds = JSON.parse(localStorage.getItem('autoStartInstIds') || '[]')
-        this.networkInstanceIds = JSON.parse(localStorage.getItem('networkInstanceIds') || '[]')
+        
       }
       catch (e) {
         console.error(e)
         this.autoStartInstIds = []
-        this.networkInstanceIds = []
+        
       }
     },
 
