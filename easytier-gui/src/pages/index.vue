@@ -130,6 +130,7 @@ async function stopNetworkCb(cfg: NetworkTypes.NetworkConfig, cb: () => void) {
   networkStore.removeNetworkInstance(cfg.instance_id)
   await retainNetworkInstance(networkStore.networkInstanceIds)
   networkStore.removeAutoStartInstId(cfg.instance_id)
+  networkStore.saveToLocalStorage() // 显式保存
 }
 
 async function updateNetworkInfos() {
@@ -234,30 +235,51 @@ function toggle_setting_menu(event: any) {
 }
 
 onBeforeMount(async () => {
-  networkStore.loadFromLocalStorage()
-  if (type() !== 'android' && getAutoLaunchStatus() && await isAutostart()) {
-    getCurrentWindow().hide()
-    const autoStartIds = networkStore.autoStartInstIds
-    for (const id of autoStartIds) {
-      const cfg = networkStore.networkList.find((item: NetworkTypes.NetworkConfig) => item.instance_id === id)
-      if (cfg) {
+  // 加载本地存储配置
+  await networkStore.loadFromLocalStorage()
+
+  // 启动所有已记录的运行实例
+  const instancesToStart = networkStore.networkInstanceIds
+  for (const id of instancesToStart) {
+    const cfg = networkStore.networkList.find(
+      (item: NetworkTypes.NetworkConfig) => item.instance_id === id
+    )
+    if (cfg) {
+      try {
         networkStore.addNetworkInstance(cfg.instance_id)
         await runNetworkInstance(cfg)
+      } catch (e) {
+        console.error(`启动实例 ${cfg.instance_id} 失败:`, e)
       }
+    }
+  }
+
+  // 处理自动启动窗口隐藏（非Android环境）
+  if (type() !== 'android' && getAutoLaunchStatus() && await isAutostart()) {
+    getCurrentWindow().hide()
+  }
+
+  // Android平台初始化VPN服务
+  if (type() === 'android') {
+    try {
+      await initMobileVpnService()
+      console.log("VPN服务初始化成功")
+    } catch (e) {
+      console.error("VPN服务初始化失败", e)
     }
   }
 })
 
+// 状态持久化
+networkStore.$subscribe((mutation, state) => {
+  localStorage.setItem('networkInstances', JSON.stringify(state.networkInstanceIds))
+  localStorage.setItem('autoStartInstIds', JSON.stringify(state.autoStartInstIds))
+})
+
+
 onMounted(async () => {
   console.error("easytier init vpn service start--")
-  if (type() === 'android') {
-    try {
-      await initMobileVpnService()
-      console.error("easytier init vpn service done")
-    } catch (e: any) {
-      console.error("easytier init vpn service failed", e)
-    }
-  }
+  
 })
 
 function isRunning(id: string) {
