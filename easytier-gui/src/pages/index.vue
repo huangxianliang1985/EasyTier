@@ -143,7 +143,7 @@ const newTask = async () => {
   // 这里是新任务的具体逻辑
   console.log('新任务执行');
   if(networkStore.curNetworkId){
-  	if(is_running(networkStore.curNetworkId)){
+  	if(isRunning(networkStore.curNetworkId)){
   	}else{
     		const cfg = networkStore.networkList.find(
     		  (item: NetworkTypes.NetworkConfig) => item.instance_id === networkStore.curNetworkId
