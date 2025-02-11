@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       build_ref:
-      description: 'Git reference to build (branch or tag). Leave empty to use the default branch.'
-      required: false
-      default: ''
+        description: 'Git reference to build (branch or tag). Leave empty to use the default branch.'
+        required: false
+        default: ''
       
 env:
   CARGO_TERM_COLOR: always
