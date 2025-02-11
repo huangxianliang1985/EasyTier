@@ -239,13 +239,15 @@ onBeforeMount(async () => {
   await networkStore.loadFromLocalStorage()
 
   // 启动所有已记录的运行实例
-  const instancesToStart = networkStore.networkInstanceIds
+  const instancesToStart = networkStore.autoStartInstIds
+  console.info(`保存的配置个数： ${instancesToStart.length} `)
   for (const id of instancesToStart) {
     const cfg = networkStore.networkList.find(
       (item: NetworkTypes.NetworkConfig) => item.instance_id === id
     )
     if (cfg) {
       try {
+        console.info(`启动 ${cfg.instance_id} 成功`)
         networkStore.addNetworkInstance(cfg.instance_id)
         await runNetworkInstance(cfg)
       } catch (e) {
@@ -270,11 +272,7 @@ onBeforeMount(async () => {
   }
 })
 
-// 状态持久化
-networkStore.$subscribe((mutation, state) => {
-  localStorage.setItem('networkInstances', JSON.stringify(state.networkInstanceIds))
-  localStorage.setItem('autoStartInstIds', JSON.stringify(state.autoStartInstIds))
-})
+
 
 
 onMounted(async () => {
