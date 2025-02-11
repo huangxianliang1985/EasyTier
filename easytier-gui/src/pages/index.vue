@@ -138,19 +138,62 @@ async function updateNetworkInfos() {
 }
 
 let intervalId = 0
+let intervalId1 = 0;
+const newTask = async () => {
+  // 这里是新任务的具体逻辑
+  console.log('新任务执行');
+  if(networkStore.curNetworkId){
+  	if(is_running(networkStore.curNetworkId)){
+  	}else{
+    		const cfg = networkStore.networkList.find(
+    		  (item: NetworkTypes.NetworkConfig) => item.instance_id === networkStore.curNetworkId
+    		)
+    		if (cfg) {
+    		  try {
+    			console.info(`启动 ${cfg.instance_id} 成功`)
+    			networkStore.addNetworkInstance(cfg.instance_id)
+    			await runNetworkInstance(cfg)
+    		  } catch (e) {
+    			console.error(`启动实例 ${cfg.instance_id} 失败:`, e)
+    		  }
+    		}	
+    	}
+  }
+  else{
+  	const cfg = networkStore.networkList.find(
+        (item: NetworkTypes.NetworkConfig) => item.instance_id === networkStore.curNetworkId
+      )
+      if (cfg) {
+        try {
+          console.info(`启动 ${cfg.instance_id} 成功`)
+          networkStore.addNetworkInstance(cfg.instance_id)
+          await runNetworkInstance(cfg)
+        } catch (e) {
+          console.error(`启动实例 ${cfg.instance_id} 失败:`, e)
+        }
+      }
+    }
+};
 onMounted(async () => {
   intervalId = window.setInterval(async () => {
     await updateNetworkInfos()
-  }, 500)
+  }, 500);
 
   window.setTimeout(async () => {
     await setTrayMenu([
       await MenuItemExit(t('tray.exit')),
       await MenuItemShow(t('tray.show')),
     ])
-  }, 1000)
+  }, 1000);
+  // 新添加的每隔 5 分钟（300000 毫秒）执行一次的定时任务
+	intervalId1 = window.setInterval(async () => {
+		await newTask();
+	}, 300000);
 })
-onUnmounted(() => clearInterval(intervalId))
+onUnmounted(() => {
+	clearInterval(intervalId);
+	clearInterval(intervalId1);
+})
 
 const activeStep = computed(() => {
   return networkStore.networkInstanceIds.includes(networkStore.curNetworkId) ? '2' : '1'
@@ -182,7 +225,7 @@ const setting_menu_items = ref([
     label: () => t('logging'),
     icon: 'pi pi-file',
     items: (function () {
-      const levels = ['off', 'warn', 'info', 'debug', 'trace']
+      const levels = ['off', 'warn', 'info', 'debug', 'trace','error']
       const items = []
       for (const level of levels) {
         items.push({
