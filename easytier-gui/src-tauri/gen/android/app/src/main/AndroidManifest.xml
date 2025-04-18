@@ -45,10 +45,10 @@
                 <action android:name="android.net.VpnService" />
             </intent-filter>
         </service>
-      <service
+      <!-- <service
         android:name=".ProxyService"
         android:enabled="true"
         android:exported="false"
-        android:stopWithTask="false"/> <!-- 保持后台运行 -->
+        android:stopWithTask="false"/> 保持后台运行 -->
     </application>
 </manifest>
