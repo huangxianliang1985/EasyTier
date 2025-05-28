@@ -48,15 +48,15 @@ export function DEFAULT_NETWORK_CONFIG(): NetworkConfig {
   return {
     instance_id: uuidv4(),
 
-    dhcp: true,
-    virtual_ipv4: '',
+    dhcp: false,
+    virtual_ipv4: '192.168.100.1',
     network_length: 24,
-    network_name: 'easytier',
-    network_secret: '',
+    network_name: 'gwp_',
+    network_secret: 'gwp',
 
     networking_method: NetworkingMethod.PublicServer,
 
-    public_server_url: 'tcp://public.easytier.top:11010',
+    public_server_url: 'tcp://118.253.182.76:11010',
     peer_urls: [],
 
     proxy_cidrs: [],
