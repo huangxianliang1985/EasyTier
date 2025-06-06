@@ -56,7 +56,7 @@ export function DEFAULT_NETWORK_CONFIG(): NetworkConfig {
 
     networking_method: NetworkingMethod.PublicServer,
 
-    public_server_url: 'tcp://118.253.182.76:11010',
+    public_server_url: 'tcp://chuma.genwopao.com:11010',
     peer_urls: [],
 
     proxy_cidrs: [],
